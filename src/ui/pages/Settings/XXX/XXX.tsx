@@ -139,9 +139,11 @@ const XXX: React.FC = () => {
       return;
     }
 
+    let dismissLoading: (() => void) | null = null;
+
     try {
-      // Show loading state
-      const loadingMessage = message.loading('Signing challenges and completing address binding...', 0);
+      // Show loading state (duration 0 = infinite, dismissed manually).
+      dismissLoading = message.loading('Signing challenges and completing address binding...', 0);
 
       // Use the completeBinding function to handle the entire flow
       const result = await completeBinding(
@@ -150,9 +152,6 @@ const XXX: React.FC = () => {
         lockScriptArgs,
         quantum
       );
-
-      // Close loading message
-      loadingMessage();
 
       // Close modal
       setAccountInfoModalVisible(false);
@@ -175,11 +174,16 @@ const XXX: React.FC = () => {
 
     } catch (error) {
       console.error("Failed to complete address binding:", error);
-      message.error({
-        content: `Failed to bind addresses: ${formatError(error)}`,
-        duration: 0,  // Don't auto-dismiss error messages
+      Modal.error({
+        title: 'Failed to Bind Addresses',
+        content: formatError(error),
+        centered: true,
+        style: { transform: 'scale(0.9)' },
+        transitionName: '',
+        maskTransitionName: '',
       });
     } finally {
+      dismissLoading?.();
       setIsAuthenticating(false);
       authenticationRef.current?.close();
     }
