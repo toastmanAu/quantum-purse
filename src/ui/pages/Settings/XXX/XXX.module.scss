@@ -1,7 +1,8 @@
 .daov2 {
+  height: 45rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
   padding: 24px;
-  max-width: 600px;
-  margin: 0 auto;
 
   h4 {
     margin: 0 0 8px 0;
